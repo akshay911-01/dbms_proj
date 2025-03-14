@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Expense Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(120deg, #8EC5FC, #E0C3FC);
+        }
+
+        /* Background Video */
+        #background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        /* Login Container */
+        .login-container {
+            position: relative;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(12px);
+            border-radius: 15px;
+            width: 350px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .login-container:hover {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-container h2 {
+            margin-bottom: 20px;
+            font-size: 26px;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Input Fields */
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.7);
+            color: #333;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .login-container input:focus {
+            border: 2px solid #6200ea;
+            box-shadow: 0 4px 10px rgba(98, 0, 234, 0.5);
+        }
+
+        /* Login Button */
+        .login-container button {
+            width: 100%;
+            padding: 12px;
+            background: #6200ea;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .login-container button:hover {
+            background: #7b1fa2;
+            transform: scale(1.05);
+        }
+
+        /* Create Account Link */
+        .link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            text-decoration: none;
+            color: #fff;
+            font-size: 14px;
+            transition: opacity 0.3s;
+        }
+
+        .link:hover {
+            opacity: 0.7;
+        }
+
+        /* Error Message */
+        .error-msg {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 400px) {
+            .login-container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Video -->
+    <video autoplay muted loop id="background-video">
+        <source src="video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Login Form -->
+    <div class="login-container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Enter Email" required>
+            <input type="password" id="password" placeholder="Enter Password" required>
+            <button type="submit">Login</button>
+            <p class="error-msg" id="errorMessage"></p>
+        </form>
+        <a class="link" href="register.html">Create Account</a>
+    </div>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const errorMessage = document.getElementById("errorMessage");
+
+            if (!email || !password) {
+                errorMessage.innerText = "⚠️ Please fill in all fields!";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            try {
+                const response = await fetch("http://localhost:5000/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert("✅ Login Successful!");
+                    localStorage.setItem("token", data.token); // Store JWT token
+                    window.location.href = "index.html"; // Redirect to main page
+                } else {
+                    errorMessage.innerText = "❌ " + data.message;
+                    errorMessage.style.display = "block";
+                }
+            } catch (error) {
+                console.error("Login Error:", error);
+                errorMessage.innerText = "❌ Server Error. Try again later.";
+                errorMessage.style.display = "block";
+            }
+        });
+    </script>
+
+</body>
+</html>
