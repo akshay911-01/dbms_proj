@@ -42,17 +42,27 @@ router.get("/category/:category", async (req, res) => {
 });
 
 // ➤ Delete an expense
-router.delete("/:id", async (req, res) => {
+const authenticateToken = require("../middleware/auth"); // Ensure middleware is used
+
+// ➤ Delete an expense (Authenticated)
+router.delete("/:id", authenticateToken, async (req, res) => {
     try {
-        const expense = await Expense.findByIdAndDelete(req.params.id);
+        const expense = await Expense.findById(req.params.id);
         if (!expense) {
-            return res.status(404).json({ message: "Expense not found!" });
+            return res.status(404).json({ message: "❌ Expense not found!" });
         }
-        res.json({ message: "Expense deleted successfully!" });
+
+        if (expense.userId.toString() !== req.userId) {
+            return res.status(403).json({ message: "❌ Unauthorized to delete this expense" });
+        }
+
+        await Expense.findByIdAndDelete(req.params.id);
+        res.json({ message: "✅ Expense deleted successfully!" });
     } catch (error) {
-        console.error(error);
+        console.error("❌ Error deleting expense:", error);
         res.status(500).json({ message: "Server Error!" });
     }
 });
+
 
 module.exports = router;

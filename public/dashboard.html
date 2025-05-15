@@ -4,65 +4,166 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Expense Tracker</title>
-
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Ubuntu', sans-serif;
             margin: 0;
             padding: 0;
+            color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background: linear-gradient(120deg, #8EC5FC, #E0C3FC);
+            overflow: hidden;
+            background: linear-gradient(120deg, #89f7fe, #66a6ff);
+        }
+
+        #background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
         }
 
         .container {
-            width: 400px;
+            position: relative;
+            padding: 50px;
             background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            width: 450px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
             text-align: center;
         }
 
         h2 {
-            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: #36f5f5;
+        }
+
+        p {
+            font-size: 16px;
+            color: #fff;
+            margin-bottom: 30px;
+        }
+
+        .link_wrapper {
+            position: relative;
+            display: inline-block;
         }
 
         .btn {
-            width: 100%;
-            padding: 12px;
-            background: #6200ea;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 280px;
+            height: 60px;
+            line-height: normal;
             font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 10px;
             text-decoration: none;
-            display: inline-block;
+            background: #333;
             text-align: center;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 3px solid #333;
+            transition: all .35s;
+            font-size: 16px;
+            padding: 0 20px;
+        }
+
+        .icon {
+            width: 50px;
+            height: 50px;
+            border: 3px solid transparent;
+            position: absolute;
+            transform: rotate(45deg);
+            right: 0;
+            top: 0;
+            z-index: -1;
+            transition: all .35s;
+        }
+
+        .icon svg {
+            width: 30px;
+            position: absolute;
+            top: calc(50% - 15px);
+            left: calc(50% - 15px);
+            transform: rotate(-45deg);
+            fill: #033e74;
+            transition: all .35s;
         }
 
         .btn:hover {
-            background: #7b1fa2;
-            transform: scale(1.05);
+            width: 250px;
+            border: 3px solid #033e74;
+            background: transparent;
+            color: #fff;
+        }
+
+        .btn:hover + .icon {
+            border: 3px solid #033e74;
+            right: -25%;
         }
     </style>
 </head>
 <body>
+    <video autoplay muted loop id="background-video">
+        <source src="eg1.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
 
     <div class="container">
         <h2>Welcome to Your Dashboard</h2>
-        <p>Manage your expenses and track your financial health.</p>
-
-        <!-- ✅ Updated: Button now links to tracker.html -->
-        <a href="tracker.html" class="btn">Go to Expense Tracker</a>
+        <p>Manage your expenses and track your financial health with ease.</p>
+        <div class="link_wrapper">
+            <a href="tracker.html" class="btn">Go to Expense Tracker</a>
+            <div class="icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M12 4v16m8-8H4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        </div>
     </div>
 
+    <script>
+        // Redirect to login if no token is found
+        if (!localStorage.getItem("token")) {
+            window.location.href = "login.html";
+        }
+
+
+
+
+      
+    document.addEventListener("DOMContentLoaded", function () {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            alert("Unauthorized! Redirecting to login...");
+            window.location.href = "login.html";
+        }
+
+        // Event listener for "Go to Expense Tracker" button
+        document.querySelector(".btn").addEventListener("click", function (event) {
+            event.preventDefault();
+            
+            if (token) {
+                window.location.href = "tracker.html";
+            } else {
+                alert("You need to log in first!");
+                window.location.href = "login.html";
+            }
+        });
+
+
+    </script>
 </body>
 </html>

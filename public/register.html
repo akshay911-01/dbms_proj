@@ -32,57 +32,65 @@
             position: relative;
             padding: 40px;
             background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 15px;
+            border-radius: 20px;
             width: 350px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
             text-align: center;
-            transition: 0.3s;
+            transition: box-shadow 0.4s ease;
         }
 
         .register-container:hover {
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 35px 65px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 255, 255, 0.4);
         }
 
         .register-container h2 {
             margin-bottom: 20px;
             font-size: 24px;
-            color: #333;
+            color: #36f5f5;
         }
 
         .register-container input {
-            width: 100%;
+            width: 90%;
             padding: 12px;
             margin: 10px 0;
             border: none;
             border-radius: 8px;
             font-size: 14px;
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.5);
             color: #333;
+            transition: all 0.3s ease;
             outline: none;
         }
 
+        .register-container input:hover {
+            background: rgba(255, 255, 255, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.5);
+        }
+
         .register-container input:focus {
-            border: 2px solid #6200ea;
-            box-shadow: 0 4px 10px rgba(98, 0, 234, 0.5);
+            border: 2px solid #3256f7;
+            box-shadow: 0 6px 15px rgb(64, 130, 252);
+            transform: scale(1.03);
         }
 
         .register-container button {
-            width: 100%;
+            width: 90%;
             padding: 12px;
-            background: #6200ea;
+            background: #33fff1;
             border: none;
             border-radius: 8px;
-            color: white;
+            color: rgb(9, 0, 0);
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.3s;
+            transition: background 0.3s ease, transform 0.3s ease;
         }
 
         .register-container button:hover {
-            background: #7b1fa2;
+            background: #ff7849;
             transform: scale(1.05);
         }
 
@@ -99,42 +107,52 @@
         .link:hover {
             opacity: 0.7;
         }
+
+        @media (max-width: 480px) {
+            .register-container {
+                padding: 30px;
+                width: 90%;
+            }
+        }
     </style>
 </head>
 <body>
     <video autoplay muted loop id="background-video">
-        <source src="video.mp4" type="video/mp4">
+        <source src="eg1.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 
     <div class="register-container">
         <h2>Create Account</h2>
-        <form id="registerForm">
+        <form id="register-form">
             <input type="text" id="username" placeholder="Enter Username" required>
             <input type="email" id="email" placeholder="Enter Email" required>
             <input type="password" id="password" placeholder="Enter Password" required>
             <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
             <button type="submit">Sign Up</button>
         </form>
+        <p class="error" style="display: none; color: #ff3b30; font-size: 14px; margin-top: 10px;">❌ Error during registration. Try again.</p>
         <a class="link" href="login.html">Already have an account? Log in</a>
     </div>
 
     <script>
-        document.getElementById("registerForm").addEventListener("submit", async function(event) {
+        document.getElementById("register-form").addEventListener("submit", async function(event) {
             event.preventDefault();
-
             const username = document.getElementById("username").value;
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirmPassword").value;
+            const errorMsg = document.querySelector(".error");
 
             if (!username || !email || !password || !confirmPassword) {
-                alert("⚠️ Please fill in all fields!");
+                errorMsg.textContent = "⚠️ Please fill in all fields!";
+                errorMsg.style.display = "block";
                 return;
             }
 
             if (password !== confirmPassword) {
-                alert("❌ Passwords do not match!");
+                errorMsg.textContent = "❌ Passwords do not match!";
+                errorMsg.style.display = "block";
                 return;
             }
 
@@ -151,11 +169,12 @@
                     alert("✅ Account Created Successfully!");
                     window.location.href = "login.html"; // Redirect to login page
                 } else {
-                    alert("❌ Registration Failed: " + data.message);
+                    errorMsg.textContent = "❌ " + data.message;
+                    errorMsg.style.display = "block";
                 }
             } catch (error) {
-                console.error("Registration Error:", error);
-                alert("❌ Server Error. Try again later.");
+                errorMsg.textContent = "❌ Server Error. Try again later.";
+                errorMsg.style.display = "block";
             }
         });
     </script>

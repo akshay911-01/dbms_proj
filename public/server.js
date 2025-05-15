@@ -25,12 +25,13 @@ const UserSchema = new mongoose.Schema({
 });
 const User = mongoose.model("User", UserSchema);
 
-// Expense Schema & Model
+// 🔹 Expense Schema (Updated)
 const ExpenseSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     category: { type: String, required: true },
     amount: { type: Number, required: true },
     description: { type: String, required: true },
+    paymentMethod: { type: String, required: true },  // ✅ Added this line
     date: { type: Date, default: Date.now }
 });
 const Expense = mongoose.model("Expense", ExpenseSchema);
@@ -95,15 +96,24 @@ app.post("/login", async (req, res) => {
 // 🔹 Add Expense (Authenticated)
 app.post("/add-expense", authenticateToken, async (req, res) => {
     try {
-        const { category, amount, description } = req.body;
+        const { category, amount, description, paymentMethod } = req.body;  // ✅ paymentMethod included
 
-        if (!category || !amount || !description) {
+        // Validate all fields
+        if (!category || !amount || !description || !paymentMethod) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
-        const newExpense = new Expense({ userId: req.userId, category, amount, description });
+        const newExpense = new Expense({
+            userId: req.userId,
+            category,
+            amount,
+            description,
+            paymentMethod  // ✅ Now this will be stored in the database
+        });
+
         await newExpense.save();
         res.status(201).json({ message: "Expense added successfully" });
+
     } catch (error) {
         console.error("Error adding expense:", error);
         res.status(500).json({ error: "Error adding expense" });
